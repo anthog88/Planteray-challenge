@@ -15,7 +15,7 @@ window.CONTEST = {
      Klistra in webbapp-adressen från Apps Script här (se GUIDE.md).
      Lämnar du den tom körs sajten i DEMO-läge: röster sparas bara i den
      egna mobilen och lösenordet till admin är "demo". */
-  apiUrl: "",
+  apiUrl: "https://script.google.com/macros/s/AKfy…/exec",
 
   /* Antal röster per gäst. Måste vara samma som MAX_VOTES i Google-skriptet. */
   maxVotes: 3,
