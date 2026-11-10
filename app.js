@@ -19,6 +19,12 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  /* Gör om [text](https://...) till klickbara länkar. Allt annat visas som vanlig text. */
+  function withLinks(text) {
+    return esc(text).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function (m, label, url) {
+      return '<a href="' + url + '" target="_blank" rel="noopener">' + label + "</a>";
+    });
+  }
   function barById(id) { for (var i = 0; i < C.bars.length; i++) if (C.bars[i].id === id) return C.bars[i]; return null; }
   function drinkById(id) { for (var i = 0; i < C.drinks.length; i++) if (C.drinks[i].id === id) return C.drinks[i]; return null; }
   function remaining() { return Math.max(0, state.max - state.voted.length); }
@@ -56,7 +62,7 @@
     $("period").textContent = C.period;
     if (!C.period) $("period").style.display = "none";
     $("brandTitle").textContent = C.brandTitle;
-    $("brandText").textContent = C.brandText;
+    $("brandText").innerHTML = withLinks(C.brandText);
     $("footer").textContent = C.footer;
     $("drinksLead").textContent = "Du har " + state.max + " röster. Rösta på de " + state.max + " drinkar du gillar mest, en röst per drink.";
 

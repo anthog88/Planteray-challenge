@@ -26,6 +26,13 @@ body {
   background: var(--cream);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+/* Bakgrundsbild. Ligger fast bakom sidan, så den inte sträcks ut på långa sidor.
+   Byt bild genom att ersätta images/bakgrund.jpg. */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--cream) url("images/bakgrund.jpg") center / cover no-repeat;
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
@@ -35,41 +42,47 @@ h1, h2, h3 { font-family: var(--serif); line-height: 1.15; margin: 0; letter-spa
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
 
 /* ---------- Topprad ---------- */
+/* Menyfältet: akvarellhimmel. Byt bild genom att ersätta images/meny-himmel.jpg */
 .topbar {
   position: sticky; top: 0; z-index: 20;
-  background: rgba(15, 42, 34, .96);
-  backdrop-filter: blur(8px);
-  color: var(--cream);
+  background: #f3c3a6 url("images/meny-himmel.jpg") center 35% / cover no-repeat;
+  color: var(--jungle);
+  box-shadow: 0 2px 12px rgba(120, 60, 30, .18);
 }
 .topbar .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
 .brandmark { font-family: var(--serif); font-weight: 700; font-size: 18px; text-decoration: none; white-space: nowrap; }
-.brandmark span { color: var(--gold); }
+.brandmark span { color: #9a3b1f; }
 .nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
 .nav::-webkit-scrollbar { display: none; }
 .nav a {
   text-decoration: none; font-size: 14px; padding: 8px 10px; border-radius: 999px;
-  color: rgba(247, 240, 227, .85); white-space: nowrap;
+  color: var(--jungle); font-weight: 600; white-space: nowrap;
 }
-.nav a:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.nav a:hover { background: rgba(255, 255, 255, .45); color: var(--jungle); }
 .votes-pill {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  background: rgba(255, 255, 255, .1); border-radius: 999px; padding: 6px 10px 6px 12px;
-  font-size: 13px; font-weight: 600;
+  background: rgba(255, 255, 255, .55); border-radius: 999px; padding: 6px 10px 6px 12px;
+  font-size: 13px; font-weight: 700; color: var(--jungle);
 }
 .dots { display: flex; gap: 4px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); transition: background .3s, transform .3s; }
 .dot.used { background: rgba(255, 255, 255, .22); }
+.topbar .dot { background: var(--jungle); }
+.topbar .dot.used { background: rgba(15, 42, 34, .18); }
 @media (max-width: 640px) {
   .nav { display: none; }
   .votes-pill { margin-left: auto; }
 }
 
 /* ---------- Hero ---------- */
+/* Bakgrund bakom titeln: mönsterbild med mörk toning så att texten går att läsa.
+   Byt bild genom att ersätta images/hero-monster.jpg. Justera toningen med siffrorna
+   efter rgba (0 = genomskinligt, 1 = helt mörkt). */
 .hero {
   background:
-    radial-gradient(1200px 400px at 85% -10%, rgba(217, 154, 62, .35), transparent 60%),
-    radial-gradient(600px 300px at -10% 110%, rgba(217, 87, 63, .25), transparent 60%),
-    var(--jungle);
+    linear-gradient(100deg, rgba(242, 226, 184, .92) 0%, rgba(242, 226, 184, .78) 42%, rgba(242, 226, 184, .15) 100%),
+    url("images/hero-monster.jpg") center / cover no-repeat,
+    #f2e2b8;
   color: var(--cream);
   padding: 48px 0 56px;
   overflow: hidden;
@@ -77,6 +90,14 @@ h1, h2, h3 { font-family: var(--serif); line-height: 1.15; margin: 0; letter-spa
 .eyebrow {
   display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
   color: var(--gold); margin-bottom: 14px;
+}
+@media (max-width: 640px) {
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(242, 226, 184, .55) 0%, rgba(242, 226, 184, .86) 35%, rgba(242, 226, 184, .90) 100%),
+      url("images/hero-monster.jpg") center / cover no-repeat,
+      #f2e2b8;
+  }
 }
 .hero h1 { font-size: clamp(36px, 9vw, 64px); font-weight: 700; max-width: 14ch; }
 .hero .tagline { font-family: var(--serif); font-style: italic; font-size: clamp(19px, 4.5vw, 24px); color: var(--gold); margin: 14px 0 0; }
@@ -116,6 +137,7 @@ section.block { padding: 52px 0; }
 }
 .brand-box h3 { color: var(--gold); font-size: 20px; }
 .brand-box p { margin: 0; color: rgba(247, 240, 227, .85); }
+.brand-box a { color: var(--gold); font-weight: 600; text-underline-offset: 3px; }
 
 /* Statusbanner */
 .banner {
@@ -322,3 +344,10 @@ footer { padding: 32px 0 110px; text-align: center; color: var(--muted); font-si
   * { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* Mörk text i titelytan så att den syns mot den ljusa beige toningen */
+.hero { color: var(--jungle); }
+.hero .eyebrow { color: #9a3b1f; }
+.hero .tagline { color: #9a3b1f; }
+.hero .intro { color: #2b3a33; }
+.hero .period { border-color: rgba(15, 42, 34, .35); }

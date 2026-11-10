@@ -21,18 +21,22 @@ window.CONTEST = {
   maxVotes: 3,
 
   /* --- STARTSIDA -------------------------------------------------------- */
-  eventName: "Planteray Cocktail Challenge",
-  tagline: "Smaka. Jämför. Rösta på din favorit.",
-  intro:
-    "Barer och restauranger har var sin egen Planteray-drink i tävlingen. " +
-    "Nu är det du som avgör vilken drink som smakar bäst.",
-  period: "Röstningen pågår 1–30 december 2026",
+  eventName: "Slaget om Slussen",
+  tagline: "Slussens bästa romcocktail",
+  intro: "Barer har skapat varsin cocktail med Planteray, prova alla & rösta fram din favorit!",
+  period: "Röstningen pågår 14\u00a0december\u00a0– 31\u00a0januari",
 
   /* Kort text om varumärket. Byt gärna mot officiell text från Planteray. */
   brandTitle: "Om Planteray",
+  /* Länkar skrivs så här: [text som visas](https://adress.se) */
   brandText:
-    "Planteray är rom från Karibien. Den lagras först i tropiskt klimat och sedan i franska ekfat. " +
-    "Resultatet är mjuk, fruktig rom som passar perfekt i cocktails.",
+    "Planteray Rum är resultatet av ett kreativt samarbete mellan den franska cognacsproducenten " +
+    "[Maison Ferrand](https://springwine.se/producenter/sprit/brandy-och-cognac/cognac-ferrand/) " +
+    "& de bästa romproducenterna runt om i världen. Från Karibien, Syd- och Centralamerika väljer dom " +
+    "noggrant ut rom från respektive destilleri. Rommen lagras i produktionsregionen & skeppas sedan över " +
+    "till Frankrike för den slutliga lagringen. Hantverksarbetet och den karakteristiska dubbellagringen har " +
+    "gett Planteray och ägaren Alexandre Gabriel en oerhört aktad ställning i dryckesvärlden & de är idag " +
+    "närmast kultförklarade både av bartenders och romfantaster.",
 
   howTo: [
     { title: "Beställ och smaka", text: "Beställ tävlingsdrinken på någon av de deltagande barerna." },
