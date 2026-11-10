@@ -1,0 +1,136 @@
+/* =====================================================================
+   INNEHÅLL FÖR RÖSTNINGSSAJTEN
+   ---------------------------------------------------------------------
+   Allt du behöver ändra finns i den här filen. Ändra texterna mellan
+   citattecknen "så här". Glöm inte kommatecknen mellan raderna.
+
+   Bilder: lägg bildfilen i mappen "images" och skriv filnamnet nedan,
+   t.ex. "images/mojito.jpg". Kvadratiska bilder (t.ex. 1000x1000 px)
+   blir snyggast. Logotyper blir runda, så kvadratiska fungerar bäst.
+   ===================================================================== */
+
+window.CONTEST = {
+
+  /* --- KOPPLING TILL GOOGLE-KALKYLARKET ---------------------------------
+     Klistra in webbapp-adressen från Apps Script här (se GUIDE.md).
+     Lämnar du den tom körs sajten i DEMO-läge: röster sparas bara i den
+     egna mobilen och lösenordet till admin är "demo". */
+  apiUrl: "",
+
+  /* Antal röster per gäst. Måste vara samma som MAX_VOTES i Google-skriptet. */
+  maxVotes: 3,
+
+  /* --- STARTSIDA -------------------------------------------------------- */
+  eventName: "Planteray Cocktail Challenge",
+  tagline: "Smaka. Jämför. Rösta på din favorit.",
+  intro:
+    "Barer och restauranger har var sin egen Planteray-drink i tävlingen. " +
+    "Nu är det du som avgör vilken drink som smakar bäst.",
+  period: "Röstningen pågår 1–30 december 2026",
+
+  /* Kort text om varumärket. Byt gärna mot officiell text från Planteray. */
+  brandTitle: "Om Planteray",
+  brandText:
+    "Planteray är rom från Karibien. Den lagras först i tropiskt klimat och sedan i franska ekfat. " +
+    "Resultatet är mjuk, fruktig rom som passar perfekt i cocktails.",
+
+  howTo: [
+    { title: "Beställ och smaka", text: "Beställ tävlingsdrinken på någon av de deltagande barerna." },
+    { title: "Fota och rösta", text: "Tryck på Rösta vid drinken och ta en bild på den med mobilen. Bilden bekräftar din röst." },
+    { title: "Du har 3 röster", text: "Du kan rösta på tre olika drinkar. Vill du kan din bild visas i bildflödet, gärna med ditt Instagram." }
+  ],
+
+  /* Liten text längst ned på sidan */
+  footer: "Arrangeras av Spring Wine & Spirits. Njut ansvarsfullt. 18\u00a0år.",
+
+  /* --- BARERNA ----------------------------------------------------------
+     id:        kort unikt namn utan mellanslag/å/ä/ö. Används av drinkarna.
+     instagram: kontonamnet UTAN @, t.ex. "barlagunen"
+     mapsUrl:   länk till Google Maps (valfri). Lämnas den tom skapas
+                en kartlänk automatiskt från adressen. */
+  bars: [
+    {
+      id: "lagunen",
+      name: "Bar Lagunen",
+      city: "Åre",
+      description: "Exempeltext. Avslappnad cocktailbar med utsikt över sjön och fokus på tropiska klassiker.",
+      address: "Exempelgatan 1, 837 52 Åre",
+      mapsUrl: "",
+      website: "https://example.com",
+      instagram: "exempelbar_1",
+      logo: "images/bar-1-logo.svg"
+    },
+    {
+      id: "fjallsjon",
+      name: "Restaurang Fjällsjön",
+      city: "Åre",
+      description: "Exempeltext. Restaurang med fjällnära råvaror och en bar som gillar att experimentera.",
+      address: "Exempelvägen 2, 837 52 Åre",
+      mapsUrl: "",
+      website: "https://example.com",
+      instagram: "exempelbar_2",
+      logo: "images/bar-2-logo.svg"
+    },
+    {
+      id: "kajen",
+      name: "Cocktailbaren Kajen",
+      city: "Stockholm",
+      description: "Exempeltext. Liten bar vid vattnet med ett kort men genomtänkt cocktailmeny.",
+      address: "Exempelkajen 3, 111 11 Stockholm",
+      mapsUrl: "",
+      website: "",
+      instagram: "exempelbar_3",
+      logo: "images/bar-3-logo.svg"
+    },
+    {
+      id: "tropik",
+      name: "Bistro Tropik",
+      city: "Göteborg",
+      description: "Exempeltext. Bistro med karibiska smaker och en rombar med över 50 sorter.",
+      address: "Exempelplatsen 4, 411 11 Göteborg",
+      mapsUrl: "",
+      website: "https://example.com",
+      instagram: "exempelbar_4",
+      logo: "images/bar-4-logo.svg"
+    }
+  ],
+
+  /* --- DRINKARNA --------------------------------------------------------
+     id:    kort unikt namn utan mellanslag/å/ä/ö. ÄNDRA INTE id efter att
+            röstningen har startat, då tappar drinken sina röster i admin.
+     bar:   samma id som baren ovan. */
+  drinks: [
+    {
+      id: "solnedgang",
+      name: "Solnedgång i Åre",
+      bar: "lagunen",
+      image: "images/drink-1.svg",
+      description: "Exempeltext. Fruktig och frisk sour med ananas och en touch av kanel.",
+      ingredients: ["Planteray 3 Stars", "Ananas", "Lime", "Kanelsirap", "Äggvita"]
+    },
+    {
+      id: "fjallbris",
+      name: "Fjällbris",
+      bar: "fjallsjon",
+      image: "images/drink-2.svg",
+      description: "Exempeltext. Highball med rabarber och tonic. Lätt och törstsläckande.",
+      ingredients: ["Planteray O.F.T.D.", "Rabarbercordial", "Tonic", "Citron"]
+    },
+    {
+      id: "kajtiki",
+      name: "Kajens Tiki",
+      bar: "kajen",
+      image: "images/drink-3.svg",
+      description: "Exempeltext. Klassisk tiki med passionsfrukt, mandel och mynta.",
+      ingredients: ["Planteray Original Dark", "Passionsfrukt", "Orgeat", "Lime", "Mynta"]
+    },
+    {
+      id: "tropiskold",
+      name: "Tropisk Old Fashioned",
+      bar: "tropik",
+      image: "images/drink-4.svg",
+      description: "Exempeltext. Rund och komplex old fashioned med banan och apelsinzest.",
+      ingredients: ["Planteray Xaymaca", "Banansirap", "Angostura", "Apelsinzest"]
+    }
+  ]
+};

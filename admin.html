@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0f2a22">
+  <title>Admin – Röstresultat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f1ebdf; }
+    .login { max-width: 380px; margin: 12vh auto; background: var(--paper); border-radius: 22px; padding: 28px; box-shadow: var(--shadow); }
+    .login h1 { font-size: 28px; }
+    .login p { color: var(--muted); margin: 6px 0 18px; }
+    label { font-size: 14px; font-weight: 600; display: block; margin-bottom: 6px; }
+    input[type=password], input[type=text] {
+      width: 100%; font: inherit; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff;
+    }
+    input:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+    .err { color: var(--coral); font-weight: 600; font-size: 14px; min-height: 20px; margin-top: 10px; }
+    .login .cta { width: 100%; margin-top: 8px; }
+
+    .admin { display: none; padding: 24px 20px 60px; }
+    .admin.show { display: block; }
+    .admin-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .admin-head h1 { font-size: clamp(26px, 5vw, 34px); margin-right: auto; }
+    .meta { font-size: 13px; color: var(--muted); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--jungle); background: #fff; color: var(--jungle);
+      font-weight: 600; font-size: 14px; padding: 9px 14px; border-radius: 999px;
+    }
+    .btn.primary { background: var(--jungle); color: var(--cream); }
+    .btn.danger { border-color: var(--coral); color: var(--coral); }
+    .btn:disabled { opacity: .5; }
+
+    .kpis { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px; }
+    .kpi { background: var(--paper); border-radius: 16px; padding: 16px 18px; border: 1px solid var(--line); }
+    .kpi .v { font-family: var(--serif); font-size: 34px; font-weight: 700; line-height: 1.1; }
+    .kpi .l { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+    .panel { background: var(--paper); border-radius: 18px; border: 1px solid var(--line); padding: 20px; margin-bottom: 20px; }
+    .panel h2 { font-size: 22px; margin-bottom: 14px; }
+    .panel-row { display: grid; gap: 20px; grid-template-columns: 1fr; }
+    @media (min-width: 860px) { .panel-row { grid-template-columns: 1fr 1fr; } }
+
+    .rank { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .rank li { display: grid; grid-template-columns: 28px 52px 1fr auto; gap: 12px; align-items: center; }
+    .rank .pos { font-family: var(--serif); font-weight: 700; font-size: 20px; color: var(--muted); text-align: center; }
+    .rank li:first-child .pos { color: var(--gold-dark); }
+    .rank img { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; }
+    .rank .name { font-weight: 700; }
+    .rank .bar { font-size: 13px; color: var(--muted); }
+    .track { height: 8px; background: var(--cream); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+    .fill { height: 100%; background: var(--jungle); border-radius: 4px; transition: width .5s; }
+    .rank li:first-child .fill { background: var(--gold); }
+    .rank .num { text-align: right; }
+    .rank .num b { font-family: var(--serif); font-size: 24px; display: block; line-height: 1; }
+    .rank .num span { font-size: 12.5px; color: var(--muted); }
+    .unknown { font-size: 11px; background: #f9dcd5; color: #7a2c1c; padding: 2px 6px; border-radius: 6px; margin-left: 6px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    td.r, th.r { text-align: right; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .tools { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .mod-toggle { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--cream); border: 1px solid var(--line); cursor: pointer; font-weight: 600; margin-bottom: 16px; }
+    .mod-toggle input { width: 22px; height: 22px; accent-color: var(--jungle); margin: 0; flex-shrink: 0; }
+    .mod-toggle small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; scrollbar-width: none; }
+    .tabs button { flex-shrink: 0; border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: 14px; }
+    .tabs button[aria-selected="true"] { background: var(--jungle); color: var(--cream); border-color: var(--jungle); }
+    .tabs .count { opacity: .7; font-weight: 400; }
+    .photo-admin-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); }
+    .pa { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .pa a.img { display: block; aspect-ratio: 1; background: var(--line); }
+    .pa img { width: 100%; height: 100%; object-fit: cover; }
+    .pa .info { padding: 8px 10px; font-size: 13px; line-height: 1.35; flex: 1; }
+    .pa .info b { display: block; font-size: 14px; }
+    .pa .info .ig { color: var(--gold-dark); font-weight: 600; }
+    .pa .acts { display: flex; border-top: 1px solid var(--line); }
+    .pa .acts button { flex: 1; border: 0; background: transparent; padding: 10px 4px; font-weight: 700; font-size: 13.5px; }
+    .pa .acts button + button { border-left: 1px solid var(--line); }
+    .pa .acts .ok { color: var(--ok); }
+    .pa .acts .no { color: var(--coral); }
+    .pa .acts button:disabled { opacity: .4; }
+    .pa-empty { grid-column: 1 / -1; color: var(--muted); padding: 18px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="login" id="login">
+    <h1>Adminvy</h1>
+    <p id="loginNote">Logga in för att se röstresultaten.</p>
+    <form id="loginForm">
+      <label for="pw">Lösenord</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <button class="cta" type="submit" id="loginBtn">Logga in</button>
+      <div class="err" id="loginErr" role="alert"></div>
+    </form>
+  </div>
+
+  <div class="admin wrap" id="admin">
+    <div class="admin-head">
+      <h1 id="adminTitle">Röstresultat</h1>
+      <span class="meta" id="updated"></span>
+      <button class="btn" id="refreshBtn">Uppdatera</button>
+      <button class="btn" id="logoutBtn">Logga ut</button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kTotal">–</div><div class="l">Röster totalt</div></div>
+      <div class="kpi"><div class="v" id="kDevices">–</div><div class="l">Unika mobiler</div></div>
+      <div class="kpi"><div class="v" id="kAvg">–</div><div class="l">Röster per mobil (snitt)</div></div>
+      <div class="kpi"><div class="v" id="kOpen" style="font-size:22px;padding-top:8px">–</div><div class="l">Röstning</div></div>
+      <div class="kpi" id="kPendingBox" style="cursor:pointer"><div class="v" id="kPending">–</div><div class="l">Bilder att granska</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Ställning per drink</h2>
+      <ol class="rank" id="rank"></ol>
+    </div>
+
+    <div class="panel" id="photoPanel">
+      <h2>Bilder</h2>
+      <label class="mod-toggle"><input type="checkbox" id="modToggle">
+        <span>Granska bilder innan de visas i bildflödet<small id="modHint"></small></span></label>
+      <div class="tabs" role="tablist" id="photoTabs">
+        <button role="tab" data-s="Väntar" aria-selected="true">Att granska <span class="count" id="cWait"></span></button>
+        <button role="tab" data-s="Godkänd" aria-selected="false">I flödet <span class="count" id="cOk"></span></button>
+        <button role="tab" data-s="Dold" aria-selected="false">Dolda <span class="count" id="cHid"></span></button>
+        <button role="tab" data-s="Privat" aria-selected="false">Ej för flödet <span class="count" id="cPriv"></span></button>
+      </div>
+      <div class="photo-admin-grid" id="photoGrid"></div>
+      <p class="muted" style="margin-top:12px">"Ej för flödet" är bilder där gästen inte har valt att visa bilden. De kan inte publiceras. Alla bilder finns i Drive-mappen "Planteray röstbilder".</p>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel">
+        <h2>Per bar</h2>
+        <table><thead><tr><th>Bar</th><th class="r">Röster</th><th class="r">Andel</th></tr></thead><tbody id="barTable"></tbody></table>
+      </div>
+      <div class="panel">
+        <h2>Senaste röster</h2>
+        <table><thead><tr><th>Tid</th><th>Drink</th><th>Mobil</th></tr></thead><tbody id="recent"></tbody></table>
+        <p class="muted" id="perDevice" style="margin-top:12px"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Exportera och hantera</h2>
+      <div class="tools">
+        <button class="btn primary" id="expSummary">Ladda ned resultat (CSV)</button>
+        <button class="btn" id="expAll">Ladda ned alla röster (CSV)</button>
+        <button class="btn" id="toggleOpen">Stäng röstningen</button>
+        <button class="btn danger" id="resetBtn">Nollställ röster…</button>
+      </div>
+      <p class="muted" style="margin-top:12px">CSV-filerna öppnas direkt i Excel. Alla röster finns också i Google-kalkylarket under fliken "Röster". Nollställning flyttar rösterna till en arkivflik i kalkylarket, inget raderas.</p>
+    </div>
+  </div>
+
+  <div class="sheet-backdrop" id="dlg" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+      <div class="grab"></div>
+      <h3 id="dlgTitle"></h3>
+      <p id="dlgText"></p>
+      <div id="dlgInputWrap" style="margin-top:16px;text-align:left">
+        <label for="dlgInput" id="dlgLabel"></label>
+        <input type="text" id="dlgInput" autocomplete="off" autocapitalize="characters">
+      </div>
+      <div class="actions">
+        <button class="cta" id="dlgOk"></button>
+        <button class="secondary" id="dlgCancel">Avbryt</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="alert"></div>
+
+  <script src="content.js"></script>
+  <script src="api.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
