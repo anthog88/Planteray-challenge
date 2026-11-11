@@ -20,11 +20,27 @@ window.CONTEST = {
   /* Antal röster per gäst. Måste vara samma som MAX_VOTES i Google-skriptet. */
   maxVotes: 3,
 
+  /* --- ÅLDERSSPÄRR (visas innan man kommer in på sidan) ------------------ */
+  ageGate: {
+    title: "Är du 18 år eller äldre?",
+    text: "Sidan innehåller information om alkohol och är bara till för dig som har fyllt 18\u00a0år.",
+    yes: "Ja, jag är 18 år eller äldre",
+    no: "Nej, jag är under 18",
+    denied: "Du måste vara 18 år eller äldre för att besöka sidan.",
+    small: "Njut ansvarsfullt."
+  },
+
   /* --- STARTSIDA -------------------------------------------------------- */
-  eventName: "Slaget om Slussen",
+  eventName: "Planteray Destination: Slussen",
   tagline: "Slussens bästa romcocktail",
   intro: "Barer har skapat varsin cocktail med Planteray, prova alla & rösta fram din favorit!",
   period: "Röstningen pågår 14\u00a0december\u00a0– 31\u00a0januari",
+
+  /* Ruta under rubriken "Cocktails" om tävlingen för gästerna */
+  prize: {
+    title: "Vinn ett Planteray-kit!",
+    text: "Rösta på 3 cocktails med ditt Instagram ifyllt varje gång och tagga barens Instagram, så är du med och tävlar om ett Planteray-kit."
+  },
 
   /* Kort text om varumärket. Byt gärna mot officiell text från Planteray. */
   brandTitle: "Om Planteray",

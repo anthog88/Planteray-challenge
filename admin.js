@@ -53,6 +53,7 @@
     $("login").style.display = "none";
     $("admin").classList.add("show");
     loadPhotos();
+    loadPrize();
     clearInterval(timer);
     timer = setInterval(function () { if (!document.hidden) { load(); if (photoTab === "Väntar") loadPhotos(); } }, 30000);
   }
@@ -61,7 +62,7 @@
     try { sessionStorage.removeItem("pr_admin_pw"); } catch (e) {}
     location.reload();
   };
-  $("refreshBtn").onclick = function () { loadPhotos(); load().then(function (ok) { if (ok) toast("Uppdaterat"); }); };
+  $("refreshBtn").onclick = function () { loadPhotos(); loadPrize(); load().then(function (ok) { if (ok) toast("Uppdaterat"); }); };
 
   /* ---------- Hämta och visa ---------- */
   function load() {
@@ -226,6 +227,54 @@
   $("kPendingBox").onclick = function () {
     $("photoTabs").querySelector('[data-s="Väntar"]').click();
     $("photoPanel").scrollIntoView({ behavior: "smooth" });
+  };
+
+  /* ---------- Tävlingen: Planteray-kit ---------- */
+  var entrants = [];
+  function loadPrize() {
+    return API.call("export", { password: pw }).then(function (res) {
+      if (!res.ok) return;
+      var max = (data && data.maxVotes) || C.maxVotes;
+      // Räkna rösterna per Instagram-konto: samma tagg på minst 3 olika drinkar
+      var byIg = {};
+      res.rows.forEach(function (r) {
+        var ig = String(r[8] || "").trim();
+        if (!ig) return;
+        var k = ig.toLowerCase();
+        var d = byIg[k] = byIg[k] || { ig: ig, votes: 0, drinkIds: [], bars: [], devices: [], last: "" };
+        d.votes++;
+        if (d.drinkIds.indexOf(String(r[2])) < 0) d.drinkIds.push(String(r[2]));
+        if (r[4] && d.bars.indexOf(String(r[4])) < 0) d.bars.push(String(r[4]));
+        if (d.devices.indexOf(String(r[1])) < 0) d.devices.push(String(r[1]));
+        if (String(r[0]) > d.last) d.last = String(r[0]);
+      });
+      var all = Object.keys(byIg).map(function (k) { return byIg[k]; });
+      entrants = all.filter(function (d) { return d.drinkIds.length >= max; })
+        .sort(function (a, b) { return a.last < b.last ? 1 : -1; });
+      $("pQual").textContent = entrants.length;
+      $("pAlmost").textContent = all.filter(function (d) { return d.drinkIds.length < max; }).length;
+      $("prizeTable").innerHTML = entrants.length ? entrants.map(function (e) {
+        return '<tr><td><a href="https://www.instagram.com/' + esc(e.ig) + '/" target="_blank" rel="noopener" style="font-weight:700;color:var(--gold-dark)">@' + esc(e.ig) + "</a>" +
+          (e.devices.length > 1 ? '<br><span class="muted">' + e.devices.length + " mobiler</span>" : "") +
+          "</td><td>" + e.drinkIds.length + " drinkar · " + esc(e.bars.join(", ")) + '</td><td class="r muted">' + esc(fmtTime(e.last)) + "</td></tr>";
+      }).join("") : '<tr><td colspan="3" class="muted">Ingen är med i tävlingen ännu.</td></tr>';
+    });
+  }
+
+  $("expPrize").onclick = function () {
+    var rows = [["Instagram", "Instagram-länk", "Röster med taggen", "Olika drinkar", "Barer", "Antal mobiler", "Senaste röst"]].concat(entrants.map(function (e) {
+      var d = new Date(e.last);
+      return ["@" + e.ig, "https://www.instagram.com/" + e.ig + "/", e.votes, e.drinkIds.length, e.bars.join(", "), e.devices.length, isNaN(d) ? e.last : d.toLocaleString("sv-SE")];
+    }));
+    download("planteray-kit-deltagare_" + stamp() + ".csv", csv(rows));
+  };
+
+  $("drawBtn").onclick = function () {
+    if (!entrants.length) { toast("Ingen är med i tävlingen ännu."); return; }
+    var buf = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(buf);
+    var w = entrants[buf[0] % entrants.length];
+    $("drawResult").innerHTML = 'Vinnare: <a href="https://www.instagram.com/' + esc(w.ig) + '/" target="_blank" rel="noopener" style="color:var(--gold-dark)">@' + esc(w.ig) + "</a> <span class=\"muted\" style=\"font-weight:400\">(" + esc(new Date().toLocaleString("sv-SE")) + ", bland " + entrants.length + " deltagare). Kontrollera att personen har taggat baren.</span>";
   };
 
   /* ---------- Bekräftelsedialog (ersätter confirm/prompt) ---------- */

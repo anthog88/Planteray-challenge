@@ -139,6 +139,21 @@
       <p class="muted" style="margin-top:12px">"Ej för flödet" är bilder där gästen inte har valt att visa bilden. De kan inte publiceras. Alla bilder finns i Drive-mappen "Planteray röstbilder".</p>
     </div>
 
+    <div class="panel" id="prizePanel">
+      <h2>Tävlingen: Planteray-kit</h2>
+      <p class="muted" style="margin:-6px 0 14px">Instagram-konton som har använts på röster för minst 3 olika drinkar. Kontrollera själv på Instagram att de har taggat baren innan du lottar ut vinnaren.</p>
+      <div class="kpis" style="margin-bottom:14px">
+        <div class="kpi"><div class="v" id="pQual">–</div><div class="l">Är med i tävlingen</div></div>
+        <div class="kpi"><div class="v" id="pAlmost">–</div><div class="l">Har Instagram på färre än 3 drinkar</div></div>
+      </div>
+      <table><thead><tr><th>Instagram</th><th>Barer</th><th class="r">Senaste röst</th></tr></thead><tbody id="prizeTable"></tbody></table>
+      <div class="tools" style="margin-top:14px">
+        <button class="btn primary" id="expPrize">Ladda ned deltagarlista (CSV)</button>
+        <button class="btn" id="drawBtn">Lotta fram en vinnare</button>
+      </div>
+      <p id="drawResult" style="margin-top:12px;font-weight:700"></p>
+    </div>
+
     <div class="panel-row">
       <div class="panel">
         <h2>Per bar</h2>

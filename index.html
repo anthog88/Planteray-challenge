@@ -4,18 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f0b89a">
-  <title>Slaget om Slussen – Rösta</title>
+  <title>Planteray Destination: Slussen – Rösta</title>
   <meta name="description" content="Rösta på den godaste Planteray-drinken.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script>
+    /* Åldersspärr: hoppa över rutan om besökaren redan bekräftat 18 år (gäller 30 dagar) */
+    try {
+      var t = parseInt(localStorage.getItem("pr_age_ok") || "0", 10);
+      if (t && Date.now() - t < 30 * 24 * 3600 * 1000) document.documentElement.classList.add("age-ok");
+    } catch (e) {}
+  </script>
 </head>
 <body>
 
+  <!-- ÅLDERSSPÄRR: visas innan sidan går att se. Texterna finns i content.js -->
+  <div class="age-gate" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="ageTitle" aria-describedby="ageText">
+    <div class="age-card">
+      <div class="age-brand" id="ageBrand">Planteray Destination: <span>Slussen</span></div>
+      <div id="ageAsk">
+        <h2 id="ageTitle">Är du 18 år eller äldre?</h2>
+        <p id="ageText">Sidan innehåller information om alkohol och är bara till för dig som har fyllt 18&nbsp;år.</p>
+        <div class="age-actions">
+          <button class="cta" id="ageYes">Ja, jag är 18 år eller äldre</button>
+          <button class="age-no" id="ageNo">Nej, jag är under 18</button>
+        </div>
+      </div>
+      <div id="ageDenied" hidden>
+        <h2>Tyvärr</h2>
+        <p id="ageDeniedText">Du måste vara 18 år eller äldre för att besöka sidan.</p>
+        <button class="age-no" id="ageBack">Tillbaka</button>
+      </div>
+      <p class="age-small" id="ageSmall">Njut ansvarsfullt.</p>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="wrap">
-      <a href="#start" class="brandmark" id="brandmark">Slaget om <span>Slussen</span></a>
+      <a href="#start" class="brandmark" id="brandmark">Planteray Destination: <span>Slussen</span></a>
       <nav class="nav" aria-label="Huvudmeny">
         <a href="#start">Start</a>
         <a href="#drinkar">Drinkar</a>
@@ -34,6 +62,7 @@
     <!-- STARTSIDA -->
     <section class="hero" id="start">
       <div class="wrap">
+        <img class="hero-logo" src="images/planteray-logo.png" alt="Planteray Rum" width="700" height="472">
         <span class="eyebrow">Cocktailtävling</span>
         <h1 id="eventName"></h1>
         <p class="tagline" id="tagline"></p>
@@ -60,11 +89,19 @@
     <section class="block" id="drinkar" style="padding-top:8px">
       <div class="wrap">
         <div class="section-head">
-          <h2>Drinkarna</h2>
+          <h2>Cocktails</h2>
           <p id="drinksLead"></p>
         </div>
         <div class="banner" id="banner" role="status"></div>
         <div class="drink-grid" id="drinkGrid"></div>
+        <div class="prize" id="prize" hidden>
+          <div class="prize-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
+          </div>
+          <h3 id="prizeTitle"></h3>
+          <p id="prizeText"></p>
+          <div class="prize-steps" id="prizeSteps"></div>
+        </div>
       </div>
     </section>
 

@@ -80,13 +80,15 @@ h1, h2, h3 { font-family: var(--serif); line-height: 1.15; margin: 0; letter-spa
    efter rgba (0 = genomskinligt, 1 = helt mörkt). */
 .hero {
   background:
-    linear-gradient(100deg, rgba(242, 226, 184, .92) 0%, rgba(242, 226, 184, .78) 42%, rgba(242, 226, 184, .15) 100%),
+    linear-gradient(90deg, rgba(242, 226, 184, .25) 0%, rgba(242, 226, 184, .88) 22%, rgba(242, 226, 184, .92) 50%, rgba(242, 226, 184, .88) 78%, rgba(242, 226, 184, .25) 100%),
     url("images/hero-monster.jpg") center / cover no-repeat,
     #f2e2b8;
   color: var(--cream);
   padding: 48px 0 56px;
   overflow: hidden;
 }
+.hero-logo { width: 228px; height: auto; margin: 0 auto 22px; }
+@media (min-width: 640px) { .hero-logo { width: 288px; } }
 .eyebrow {
   display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
   color: var(--gold); margin-bottom: 14px;
@@ -351,3 +353,83 @@ footer { padding: 32px 0 110px; text-align: center; color: var(--muted); font-si
 .hero .tagline { color: #9a3b1f; }
 .hero .intro { color: #2b3a33; }
 .hero .period { border-color: rgba(15, 42, 34, .35); }
+
+/* ---------- Åldersspärr ---------- */
+.age-gate {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background:
+    linear-gradient(rgba(242, 226, 184, .82), rgba(242, 226, 184, .9)),
+    url("images/hero-monster.jpg") center / cover no-repeat,
+    #f2e2b8;
+  overflow-y: auto;
+}
+html.age-ok .age-gate { display: none; }
+html:not(.age-ok) body { overflow: hidden; }
+.age-card {
+  width: 100%; max-width: 420px; background: var(--paper); border-radius: 24px;
+  padding: 30px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(60, 40, 10, .25);
+}
+.age-brand { font-family: var(--serif); font-weight: 700; font-size: 26px; color: var(--jungle); margin-bottom: 18px; }
+.age-brand span { color: #9a3b1f; }
+.age-card h2 { font-size: 28px; color: var(--jungle); }
+.age-card p { color: var(--muted); margin: 10px 0 0; }
+.age-actions { display: grid; gap: 10px; margin-top: 22px; }
+.age-actions .cta { margin-top: 0; width: 100%; }
+.age-no {
+  width: 100%; border: 1.5px solid var(--line); background: #fff; color: var(--ink);
+  font-weight: 600; padding: 14px; border-radius: 999px; font-size: 15px;
+}
+#ageDenied .age-no { margin-top: 20px; }
+.age-small { font-size: 12.5px !important; margin-top: 18px !important; }
+.age-card button:focus:not(:focus-visible) { outline: none; }
+
+/* Centrerad titelyta */
+.hero .wrap { text-align: center; }
+.hero h1 { margin-left: auto; margin-right: auto; }
+.hero .intro { margin-left: auto; margin-right: auto; }
+#sa-rostar-du .section-head { text-align: center; }
+#drinkar .section-head { text-align: center; }
+#drinkar .section-head p { margin-left: auto; margin-right: auto; }
+#bilder .section-head { text-align: center; }
+#bilder .section-head p { margin-left: auto; margin-right: auto; }
+#barer .section-head { text-align: center; }
+#barer .section-head p { margin-left: auto; margin-right: auto; }
+#folj .section-head { text-align: center; }
+#folj .section-head p { margin-left: auto; margin-right: auto; }
+/* Loggorna centreras oavsett hur många barer som är med */
+.wall-grid { display: flex; flex-wrap: wrap; justify-content: center; }
+.wall-item { flex: 0 1 170px; min-width: 140px; }
+@media (max-width: 640px) { .wall-item { flex: 0 1 calc(50% - 6px); min-width: 0; } }
+
+/* ---------- Tävlingsruta: Vinn ett Planteray-kit ---------- */
+.prize {
+  max-width: 620px; margin: 0 auto 24px; text-align: center; background: var(--paper);
+  border: 2px solid var(--gold); border-radius: var(--radius); padding: 22px 20px 20px;
+  box-shadow: 0 8px 28px rgba(179, 122, 38, .18);
+}
+.prize-icon {
+  width: 56px; height: 56px; border-radius: 50%; margin: -50px auto 10px; display: grid; place-items: center;
+  background: var(--gold); color: var(--jungle); box-shadow: 0 4px 14px rgba(179, 122, 38, .35);
+}
+.prize h3 { font-size: 24px; color: #9a3b1f; }
+.prize p { margin: 8px auto 0; color: var(--ink); max-width: 46ch; }
+.prize-steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.prize-steps span {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600;
+  padding: 6px 12px; border-radius: 999px; background: var(--cream); border: 1px solid var(--line);
+}
+.prize-steps span.done { background: #dff1e6; border-color: #b6dcc4; color: #1e5a3b; }
+#drinkGrid + .prize { margin-top: 56px; margin-bottom: 0; }
+.ig-field.always { display: block; margin-top: 16px; }
+.ig-hint { font-size: 12.5px; color: var(--muted); margin: 6px 2px 0; }
+
+/* Långt namn i menyfältet: mindre text på smala mobiler */
+.brandmark { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 400px) { .brandmark { font-size: 15px; } .votes-pill { padding: 5px 8px 5px 10px; } }
+@media (max-width: 350px) { .brandmark { font-size: 12.5px; } .topbar .wrap { gap: 8px; } }
+
+/* Rubriken i titelytan: första delen på en rad, platsnamnet stort under */
+.hero h1 .name-1 { display: block; white-space: nowrap; font-size: clamp(22px, 8.6vw, 64px); }
+.hero h1 .name-2 { display: block; font-size: clamp(44px, 13vw, 88px); line-height: 1.05; margin-top: 4px; }
+.hero h1:has(.name-1) { max-width: none; }

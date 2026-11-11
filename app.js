@@ -56,7 +56,11 @@
   /* ---------- Rendera statiskt innehåll ---------- */
   function renderStatic() {
     document.title = C.eventName + " – Rösta";
-    $("eventName").textContent = C.eventName;
+    // Rubriken delas efter kolon: "Planteray Destination:" på en rad, "Slussen" under
+    var nameParts = String(C.eventName).match(/^(.*:)\s*(.+)$/);
+    $("eventName").innerHTML = nameParts
+      ? '<span class="name-1">' + esc(nameParts[1]) + '</span><span class="name-2">' + esc(nameParts[2]) + "</span>"
+      : esc(C.eventName);
     $("tagline").textContent = C.tagline;
     $("intro").textContent = C.intro;
     $("period").textContent = C.period;
@@ -138,7 +142,21 @@
     updateFloat();
   }
 
-  function render() { renderDrinks(); renderStatus(); }
+  function renderPrize() {
+    var P = C.prize;
+    if (!P) return;
+    $("prize").hidden = false;
+    $("prizeTitle").textContent = P.title;
+    $("prizeText").textContent = P.text;
+    // Bara röster som fortfarande finns räknas (t.ex. efter nollställning)
+    var n = igVotes().filter(function (id) { return state.voted.indexOf(id) >= 0; }).length;
+    var ok = n >= state.max;
+    $("prizeSteps").innerHTML =
+      '<span class="' + (ok ? "done" : "") + '">' + (ok ? ICON.check : "") + "Röster med ditt Instagram: " + Math.min(n, state.max) + " av " + state.max + "</span>" +
+      "<span>Tagga baren på Instagram</span>";
+  }
+
+  function render() { renderDrinks(); renderStatus(); renderPrize(); }
 
   /* ---------- Dialog ---------- */
   var backdrop = $("sheetBackdrop"), sheet = $("sheet"), lastFocus = null;
@@ -173,6 +191,7 @@
   /* ---------- Röstning med bild ---------- */
   var vote = null; // { drink, bar, photo }
 
+  function igVotes() { try { return JSON.parse(localStorage.getItem("pr_ig_votes") || "[]"); } catch (e) { return []; } }
   function savedIg() { try { return localStorage.getItem("pr_ig") || ""; } catch (e) { return ""; } }
   function cleanIg(s) {
     s = String(s || "").trim().replace(/^@+/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/.*$/, "");
@@ -190,11 +209,12 @@
       '<div class="photo-step">' +
       '<div id="photoBox">' + photoPicker() + "</div>" +
       '<p class="photo-note">Bilden bekräftar din röst och sparas av arrangören under tävlingen.</p>' +
-      '<label class="opt-row"><input type="checkbox" id="showFeed">' +
-      "<span>Visa min bild i bildflödet<small>Bilden visas på sajten tillsammans med drinken och baren.</small></span></label>" +
-      '<div class="ig-field" id="igField"><label for="igInput">Ditt Instagram (valfritt)</label>' +
+      '<div class="ig-field always" id="igField"><label for="igInput">Ditt Instagram (valfritt)</label>' +
       '<div class="ig-input"><span>@</span><input id="igInput" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false" maxlength="40" placeholder="dittkonto" value="' + esc(savedIg()) + '"></div>' +
-      '<div class="field-err" id="igErr"></div></div>' +
+      '<div class="field-err" id="igErr"></div>' +
+      '<p class="ig-hint">' + (C.prize ? "Fyll i på alla " + state.max + " rösterna för att vara med och tävla om ett Planteray-kit. " : "") + "Visas bara på sajten om du väljer att visa din bild.</p></div>" +
+      '<label class="opt-row"><input type="checkbox" id="showFeed">' +
+      "<span>Visa min bild i bildflödet<small>Bilden visas på sajten tillsammans med drinken, baren och ditt Instagram.</small></span></label>" +
       "</div>" +
       '<p style="font-size:14px">Du har ' + r + (r === 1 ? " röst" : " röster") + " kvar. En röst går inte att ångra.</p>" +
       '<div class="actions">' +
@@ -202,7 +222,6 @@
       '<button class="secondary" id="cancelBtn">Avbryt</button></div>'
     );
     bindPhotoInput();
-    $("showFeed").onchange = function () { $("igField").classList.toggle("show", this.checked); };
     $("igInput").oninput = function () {
       $("igErr").textContent = "";
       if (/^@/.test(this.value)) this.value = this.value.replace(/^@+/, "");
@@ -246,13 +265,14 @@
   function sendVote() {
     if (state.busy || !vote || !vote.photo) return;
     var show = $("showFeed").checked;
-    var ig = show ? cleanIg($("igInput").value) : "";
+    var ig = cleanIg($("igInput").value);
     if (ig === null) {
       $("igErr").textContent = "Skriv bara kontonamnet, t.ex. dittkonto. Bokstäver, siffror, punkt och understreck.";
       $("igInput").focus();
       return;
     }
     if (ig) { try { localStorage.setItem("pr_ig", ig); } catch (e) {} }
+    var votedIg = ig;
     var d = vote.drink, b = vote.bar;
     state.busy = true;
     var btn = $("confirmBtn");
@@ -269,6 +289,11 @@
       if (res.votedDrinks) { state.voted = res.votedDrinks; cacheVotes(); }
       if (res.maxVotes) state.max = res.maxVotes;
       if (res.ok) {
+        if (votedIg) {
+          var list = igVotes();
+          if (list.indexOf(d.id) < 0) list.push(d.id);
+          try { localStorage.setItem("pr_ig_votes", JSON.stringify(list)); } catch (e) {}
+        }
         render();
         showSuccess(d, res.photoStatus);
         vote = null;
@@ -417,7 +442,46 @@
     new IntersectionObserver(function (en) { drinksVisible = en[0].isIntersecting; updateFloat(); }, { threshold: 0.05 }).observe($("drinkGrid"));
   }
 
+  /* ---------- Åldersspärr ---------- */
+  function setupAgeGate() {
+    var gate = $("ageGate"), main = document.querySelector("main"), header = document.querySelector(".topbar");
+    var A = C.ageGate || {};
+    if (A.title) $("ageTitle").textContent = A.title;
+    if (A.text) $("ageText").textContent = A.text;
+    if (A.yes) $("ageYes").textContent = A.yes;
+    if (A.no) $("ageNo").textContent = A.no;
+    if (A.denied) $("ageDeniedText").textContent = A.denied;
+    if (A.small) $("ageSmall").textContent = A.small;
+    $("ageBrand").innerHTML = esc(C.eventName).replace(/(\S+)$/, "<span>$1</span>");
+
+    var locked = !document.documentElement.classList.contains("age-ok");
+    function lock(on) {
+      [main, header, document.querySelector("footer"), $("floatCta")].forEach(function (el) {
+        if (!el) return;
+        if (on) { el.setAttribute("inert", ""); el.setAttribute("aria-hidden", "true"); }
+        else { el.removeAttribute("inert"); el.removeAttribute("aria-hidden"); }
+      });
+    }
+    if (!locked) return;
+    lock(true);
+    setTimeout(function () { $("ageYes").focus(); }, 50);
+
+    $("ageYes").onclick = function () {
+      try { localStorage.setItem("pr_age_ok", String(Date.now())); } catch (e) {}
+      document.documentElement.classList.add("age-ok");
+      lock(false);
+      if (location.hash && document.querySelector(location.hash)) document.querySelector(location.hash).scrollIntoView();
+    };
+    $("ageNo").onclick = function () {
+      $("ageAsk").hidden = true; $("ageDenied").hidden = false; $("ageBack").focus();
+    };
+    $("ageBack").onclick = function () {
+      $("ageDenied").hidden = true; $("ageAsk").hidden = false; $("ageYes").focus();
+    };
+  }
+
   /* ---------- Start ---------- */
+  setupAgeGate();
   renderStatic();
   render();
 
